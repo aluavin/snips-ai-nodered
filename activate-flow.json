@@ -1,0 +1,449 @@
+[
+    {
+        "id": "3d0c35cb.a7905a",
+        "type": "tab",
+        "label": "Activate Object",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "95f6980.4251ce8",
+        "type": "mqtt-json",
+        "z": "3d0c35cb.a7905a",
+        "name": "hermes/intent/aluavin:ActivateObject",
+        "topic": "hermes/intent/aluavin:ActivateObject",
+        "property": "",
+        "qos": "0",
+        "broker": "b81ccd5b.97c33",
+        "x": 85,
+        "y": 330,
+        "wires": [
+            [
+                "2610f005.9f3aa"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "87d824a7.5c11",
+        "type": "mqtt out",
+        "z": "3d0c35cb.a7905a",
+        "name": "hermes/dialogueManager/continueSession",
+        "topic": "hermes/dialogueManager/continueSession",
+        "qos": "2",
+        "retain": "",
+        "broker": "b81ccd5b.97c33",
+        "x": 875,
+        "y": 380,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "7f790bdf.2ad954",
+        "type": "switch",
+        "z": "3d0c35cb.a7905a",
+        "name": "Where?",
+        "property": "payload.intent.slots_by_name.deviceLocation[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "büro",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "flur",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "küche",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "schlafzimmer",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnung",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnzimmer",
+                "vt": "str"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 7,
+        "x": 410,
+        "y": 320,
+        "wires": [
+            [
+                "f36bf4cc.a7951"
+            ],
+            [
+                "5d483997.cceb18"
+            ],
+            [
+                "d12e7017.31ce2"
+            ],
+            [
+                "46894863.8f5968"
+            ],
+            [
+                "89ccd24f.7088b8"
+            ],
+            [
+                "f193da53.984cd8"
+            ],
+            [
+                "3f0e3e7c.2a60ca"
+            ]
+        ]
+    },
+    {
+        "id": "a31c4bf7.191118",
+        "type": "switch",
+        "z": "3d0c35cb.a7905a",
+        "name": "What?",
+        "property": "payload.intent.slots_by_name.device[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "licht",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "heizung",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "spotify",
+                "vt": "str"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 230,
+        "y": 330,
+        "wires": [
+            [
+                "7f790bdf.2ad954"
+            ],
+            [
+                "7f790bdf.2ad954"
+            ],
+            [
+                "7f790bdf.2ad954"
+            ],
+            [
+                "2bb52a4d.86051e"
+            ]
+        ]
+    },
+    {
+        "id": "f36bf4cc.a7951",
+        "type": "api-call-service",
+        "z": "3d0c35cb.a7905a",
+        "name": "Büro",
+        "server": "18b877af.344b38",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppebuero\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 675,
+        "y": 300,
+        "wires": [
+            [
+                "a152b0cb.950b58"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "5d483997.cceb18",
+        "type": "api-call-service",
+        "z": "3d0c35cb.a7905a",
+        "name": "Flur",
+        "server": "18b877af.344b38",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppeflur\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 675,
+        "y": 330,
+        "wires": [
+            [
+                "a152b0cb.950b58"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "d12e7017.31ce2",
+        "type": "api-call-service",
+        "z": "3d0c35cb.a7905a",
+        "name": "Küche",
+        "server": "18b877af.344b38",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppekueche\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 675,
+        "y": 360,
+        "wires": [
+            [
+                "a152b0cb.950b58"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "46894863.8f5968",
+        "type": "api-call-service",
+        "z": "3d0c35cb.a7905a",
+        "name": "Schlafzimmer",
+        "server": "18b877af.344b38",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppeschlafzimmer\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 675,
+        "y": 420,
+        "wires": [
+            [
+                "a152b0cb.950b58"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "89ccd24f.7088b8",
+        "type": "api-call-service",
+        "z": "3d0c35cb.a7905a",
+        "name": "Wohnung",
+        "server": "18b877af.344b38",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppebuero, light.gruppeflur, light.gruppekueche, light.gruppeschlafzimmer, light.gruppewohnzimmer\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 675,
+        "y": 450,
+        "wires": [
+            [
+                "a152b0cb.950b58"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "f193da53.984cd8",
+        "type": "api-call-service",
+        "z": "3d0c35cb.a7905a",
+        "name": "Wohnzimmer",
+        "server": "18b877af.344b38",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppewohnzimmer\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 675,
+        "y": 480,
+        "wires": [
+            [
+                "a152b0cb.950b58"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "3f0e3e7c.2a60ca",
+        "type": "function",
+        "z": "3d0c35cb.a7905a",
+        "name": "Ask for Room  & Format MQTT for retain Slots",
+        "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"customData\"] = custom_data;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"text\"] = \"Wo?\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:ActivateObject\"];\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 675,
+        "y": 520,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "a152b0cb.950b58",
+        "type": "function",
+        "z": "3d0c35cb.a7905a",
+        "name": "erstelle_say",
+        "func": "var payload = msg.payload; \nvar entity= payload.intent.slots_by_name.device[0].rawValue;\nvar ort= payload.intent.slots_by_name.deviceLocation[0].rawValue;\nvar id= msg.payload.sessionId;\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"siteId\"] = ort;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:Continue\"];\nnew_msg.payload[\"text\"] = \"Es werde Licht im \" + ort + \". Möchtest du das Licht einstellen?\";\nnew_msg.payload[\"customData\"] = custom_data;\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 815,
+        "y": 380,
+        "wires": [
+            [
+                "87d824a7.5c11"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "2610f005.9f3aa",
+        "type": "function",
+        "z": "3d0c35cb.a7905a",
+        "name": "slots",
+        "func": "// Create a map of intent slots grouped by slotName.\n// Only include those we are at least 40% confident.\n// Elements are arrays of slots to deal with mulltiples.\n// e.g. {\"switchLocation\": [{\"rawValue\": \"bedroom\"}, \"rawValue\": \"office\"}]\n// It is up to downstream to decide if it can deal with any multiples or\n// insuficient slots.\n//\n// Check customData to see if this is a continued turn i.e. we got some slots\n// before and we are filling in.\nconst slots = msg.payload[\"slots\"];\nconst customData = msg.payload[\"customData\"]\nconst continuedIntent = customData !== null;\n// TODO: This will merge slots if intent is changed during a contintueSession\nnode.status({fill:\"grey\", shape:\"dot\", text: \"continued? \" + continuedIntent});\nvar by_name = {};\nif (continuedIntent === true) {\n    by_name = JSON.parse(customData);\n}\nfor (var i in slots) {\n    slot = slots[i];\n    if (slot.confidenceScore >= 0.40) {\n        list = by_name[slot.slotName] || [];\n        list.push(slot);\n        by_name[slot.slotName] = list;\n    }\n}\n    \nmsg.intent.slots_by_name = by_name;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 145,
+        "y": 330,
+        "wires": [
+            [
+                "a31c4bf7.191118"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "5a7f5bc3.8f8a04",
+        "type": "comment",
+        "z": "3d0c35cb.a7905a",
+        "name": "Restructure MQTT Content",
+        "info": "",
+        "x": 210,
+        "y": 370,
+        "wires": []
+    },
+    {
+        "id": "3f39b931.b05e56",
+        "type": "comment",
+        "z": "3d0c35cb.a7905a",
+        "name": "Ask for Room  & Format MQTT for retain Slots",
+        "info": "",
+        "x": 680,
+        "y": 610,
+        "wires": []
+    },
+    {
+        "id": "2dd8ffe.6073b8",
+        "type": "comment",
+        "z": "3d0c35cb.a7905a",
+        "name": "TTS & Continue? & Format MQTT for retain Slots",
+        "info": "",
+        "x": 940,
+        "y": 310,
+        "wires": []
+    },
+    {
+        "id": "2bb52a4d.86051e",
+        "type": "function",
+        "z": "3d0c35cb.a7905a",
+        "name": "Ask for Room  & Format MQTT for retain Slots",
+        "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"customData\"] = custom_data;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"text\"] = \"Was soll ich wo anschalten?\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:ActivateObject\"];\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 675,
+        "y": 560,
+        "wires": [
+            [
+                "87d824a7.5c11"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "2b55b267.772e2e",
+        "type": "comment",
+        "z": "3d0c35cb.a7905a",
+        "name": "Install:",
+        "info": "",
+        "x": 130,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "945b03b0.2c6568",
+        "type": "comment",
+        "z": "3d0c35cb.a7905a",
+        "name": "Edit the MQTT Nodes to use your MQTT Broker",
+        "info": "",
+        "x": 370,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "697f3fa5.c1681",
+        "type": "comment",
+        "z": "3d0c35cb.a7905a",
+        "name": "Edit the Call-Service Nodes to use your Home Assistant",
+        "info": "",
+        "x": 390,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "b81ccd5b.97c33",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "< insert your mqtt server here>",
+        "broker": "",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "18b877af.344b38",
+        "type": "server",
+        "z": "",
+        "name": "<Insert your Server here>",
+        "legacy": false,
+        "hassio": false,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open"
+    }
+]
