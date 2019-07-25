@@ -1,15 +1,39 @@
 [
     {
-        "id": "244bcf43.3f86b8",
-        "type": "tab",
-        "label": "Flow 3",
-        "disabled": false,
-        "info": ""
+        "id": "f5a28326.4938a8",
+        "type": "subflow",
+        "name": "DeactivateObject",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 30,
+                "y": 320,
+                "wires": [
+                    {
+                        "id": "16cc46ef.8e9901"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 780,
+                "y": 400,
+                "wires": [
+                    {
+                        "id": "54b59b2f.4d399c",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": []
     },
     {
-        "id": "9598e32a.e6941",
+        "id": "a133373d.db9ba8",
         "type": "switch",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "Where?",
         "property": "payload.intent.slots_by_name.deviceLocation[0].rawValue",
         "propertyType": "msg",
@@ -21,12 +45,22 @@
             },
             {
                 "t": "eq",
+                "v": "buero",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
                 "v": "flur",
                 "vt": "str"
             },
             {
                 "t": "eq",
                 "v": "küche",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "kueche",
                 "vt": "str"
             },
             {
@@ -50,37 +84,43 @@
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 7,
-        "x": 430,
-        "y": 290,
+        "outputs": 9,
+        "x": 460,
+        "y": 260,
         "wires": [
             [
-                "ce98ed24.81b008"
+                "67a14968.eeb58"
             ],
             [
-                "92333f85.89bbd"
+                "67a14968.eeb58"
             ],
             [
-                "267c0b97.411dcc"
+                "39a0b059.f2793"
             ],
             [
-                "7de39e08.c859f"
+                "a6c127ee.531c2"
             ],
             [
-                "8bf16653.091b3"
+                "a6c127ee.531c2"
             ],
             [
-                "122e8f7e.596269"
+                "8fc6e69b.aa9f5"
             ],
             [
-                "5ef2d751.6d3cd"
+                "12d06414.2bdbec"
+            ],
+            [
+                "4f5315fe.f65c74"
+            ],
+            [
+                "269b28dd.03d208"
             ]
         ]
     },
     {
-        "id": "d328b910.5fc7c8",
+        "id": "69c0468a.a8b28",
         "type": "switch",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "What?",
         "property": "payload.intent.slots_by_name.device[0].rawValue",
         "propertyType": "msg",
@@ -99,21 +139,21 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 190,
-        "y": 350,
+        "x": 220,
+        "y": 320,
         "wires": [
             [
-                "9598e32a.e6941"
+                "a133373d.db9ba8"
             ],
             []
         ]
     },
     {
-        "id": "ce98ed24.81b008",
+        "id": "67a14968.eeb58",
         "type": "api-call-service",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "Büro",
-        "server": "18b877af.344b38",
+        "server": "50f3d715.0b2c68",
         "service_domain": "light",
         "service": "turn_off",
         "data": "{\"entity_id\":\"light.gruppebuero\"}",
@@ -121,21 +161,21 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 595,
-        "y": 200,
+        "x": 625,
+        "y": 170,
         "wires": [
             [
-                "8e564e27.557f1"
+                "39dd60d.92e7ea"
             ]
         ],
         "l": false
     },
     {
-        "id": "92333f85.89bbd",
+        "id": "39a0b059.f2793",
         "type": "api-call-service",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "Flur",
-        "server": "18b877af.344b38",
+        "server": "50f3d715.0b2c68",
         "service_domain": "light",
         "service": "turn_off",
         "data": "{\"entity_id\":\"light.gruppeflur\"}",
@@ -143,21 +183,21 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 595,
-        "y": 230,
+        "x": 625,
+        "y": 200,
         "wires": [
             [
-                "8e564e27.557f1"
+                "39dd60d.92e7ea"
             ]
         ],
         "l": false
     },
     {
-        "id": "267c0b97.411dcc",
+        "id": "a6c127ee.531c2",
         "type": "api-call-service",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "Küche",
-        "server": "18b877af.344b38",
+        "server": "50f3d715.0b2c68",
         "service_domain": "light",
         "service": "turn_off",
         "data": "{\"entity_id\":\"light.gruppekueche\"}",
@@ -165,21 +205,21 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 595,
-        "y": 260,
+        "x": 625,
+        "y": 230,
         "wires": [
             [
-                "8e564e27.557f1"
+                "39dd60d.92e7ea"
             ]
         ],
         "l": false
     },
     {
-        "id": "7de39e08.c859f",
+        "id": "8fc6e69b.aa9f5",
         "type": "api-call-service",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "Schlafzimmer",
-        "server": "18b877af.344b38",
+        "server": "50f3d715.0b2c68",
         "service_domain": "light",
         "service": "turn_off",
         "data": "{\"entity_id\":\"light.gruppeschlafzimmer\"}",
@@ -187,21 +227,21 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 595,
-        "y": 320,
+        "x": 625,
+        "y": 290,
         "wires": [
             [
-                "8e564e27.557f1"
+                "39dd60d.92e7ea"
             ]
         ],
         "l": false
     },
     {
-        "id": "8bf16653.091b3",
+        "id": "12d06414.2bdbec",
         "type": "api-call-service",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "Wohnung",
-        "server": "18b877af.344b38",
+        "server": "50f3d715.0b2c68",
         "service_domain": "light",
         "service": "turn_off",
         "data": "{\"entity_id\":\"light.gruppebuero, light.gruppeflur, light.gruppekueche, light.gruppeschlafzimmer, light.gruppewohnzimmer\"}",
@@ -209,21 +249,21 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 595,
-        "y": 350,
+        "x": 625,
+        "y": 320,
         "wires": [
             [
-                "8e564e27.557f1"
+                "39dd60d.92e7ea"
             ]
         ],
         "l": false
     },
     {
-        "id": "122e8f7e.596269",
+        "id": "4f5315fe.f65c74",
         "type": "api-call-service",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "Wohnzimmer",
-        "server": "18b877af.344b38",
+        "server": "50f3d715.0b2c68",
         "service_domain": "light",
         "service": "turn_off",
         "data": "{\"entity_id\":\"light.gruppewohnzimmer\"}",
@@ -231,164 +271,197 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 595,
-        "y": 380,
+        "x": 625,
+        "y": 350,
         "wires": [
             [
-                "8e564e27.557f1"
+                "39dd60d.92e7ea"
             ]
         ],
         "l": false
     },
     {
-        "id": "5ef2d751.6d3cd",
+        "id": "54b59b2f.4d399c",
         "type": "function",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "Ask for Room",
         "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"customData\"] = custom_data;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"text\"] = \"Wo?\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:DeactivateObject\"];\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 595,
-        "y": 480,
+        "x": 715,
+        "y": 400,
         "wires": [
-            [
-                "286570f9.1ace38"
-            ]
+            []
         ],
         "l": false
     },
     {
-        "id": "8e564e27.557f1",
+        "id": "39dd60d.92e7ea",
         "type": "function",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "erstelle_say",
-        "func": "var payload = msg.payload; \nvar entity= payload.intent.slots_by_name.device[0].rawValue;\nvar ort= payload.intent.slots_by_name.deviceLocation[0].rawValue;\nvar id= msg.payload.sessionId;\nvar intend = msg.payload.intend\nvar new_msg = {};\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"siteId\"] = ort;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:Continue\"];\nnew_msg.payload[\"text\"] = \"Lich aus im \" + ort;\nnew_msg.payload[\"customData\"] = custom_data;\nmsg = new_msg;\nreturn msg;",
+        "func": "var payload = msg.payload; \nvar entity= payload.intent.slots_by_name.device[0].rawValue;\nvar ort= payload.intent.slots_by_name.deviceLocation[0].rawValue;\nvar id= msg.payload.sessionId;\nvar intend = msg.payload.intend\nvar new_msg = {};\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"siteId\"] = ort;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:Continue\"];\nnew_msg.payload[\"text\"] = \"Licht aus im \" + ort;\nnew_msg.payload[\"customData\"] = custom_data;\nmsg = new_msg;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 685,
-        "y": 290,
+        "x": 715,
+        "y": 260,
         "wires": [
             [
-                "bf3c0ce9.85aa2"
+                "c5b5a3a2.40fb6"
             ]
         ],
         "l": false
     },
     {
-        "id": "e74a1572.73396",
+        "id": "16cc46ef.8e9901",
         "type": "function",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "slots",
         "func": "// Create a map of intent slots grouped by slotName.\n// Only include those we are at least 40% confident.\n// Elements are arrays of slots to deal with mulltiples.\n// e.g. {\"switchLocation\": [{\"rawValue\": \"bedroom\"}, \"rawValue\": \"office\"}]\n// It is up to downstream to decide if it can deal with any multiples or\n// insuficient slots.\n//\n// Check customData to see if this is a continued turn i.e. we got some slots\n// before and we are filling in.\nconst slots = msg.payload[\"slots\"];\nconst customData = msg.payload[\"customData\"]\nconst continuedIntent = customData !== null;\n// TODO: This will merge slots if intent is changed during a contintueSession\nnode.status({fill:\"grey\", shape:\"dot\", text: \"continued? \" + continuedIntent});\nvar by_name = {};\nif (continuedIntent === true) {\n    by_name = JSON.parse(customData);\n}\nfor (var i in slots) {\n    slot = slots[i];\n    if (slot.confidenceScore >= 0.40) {\n        list = by_name[slot.slotName] || [];\n        list.push(slot);\n        by_name[slot.slotName] = list;\n    }\n}\n    \nmsg.intent.slots_by_name = by_name;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 85,
-        "y": 350,
+        "x": 105,
+        "y": 320,
         "wires": [
             [
-                "d328b910.5fc7c8"
+                "69c0468a.a8b28"
             ]
         ],
         "l": false
     },
     {
-        "id": "4c44e4eb.ca863c",
+        "id": "2174fb72.760d2c",
         "type": "comment",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "Restructure the Message",
         "info": "",
-        "x": 180,
-        "y": 250,
+        "x": 210,
+        "y": 220,
         "wires": []
     },
     {
-        "id": "bf3c0ce9.85aa2",
+        "id": "c5b5a3a2.40fb6",
         "type": "mqtt out",
-        "z": "244bcf43.3f86b8",
+        "z": "f5a28326.4938a8",
         "name": "hermes/dialogueManager/endSession",
         "topic": "hermes/dialogueManager/endSession",
         "qos": "2",
         "retain": "",
-        "broker": "b81ccd5b.97c33",
-        "x": 745,
-        "y": 290,
-        "wires": [],
+        "broker": "c7598dc2.56c888",
+        "x": 910,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "c1ba2e51.5cd308",
+        "type": "change",
+        "z": "f5a28326.4938a8",
+        "name": "siteID => device_location",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.intent.slots_by_name.deviceLocation[0].rawValue",
+                "pt": "msg",
+                "to": "payload.siteId",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 810,
+        "y": 440,
+        "wires": [
+            [
+                "6c0bcbfd.f3ba64"
+            ]
+        ]
+    },
+    {
+        "id": "269b28dd.03d208",
+        "type": "switch",
+        "z": "f5a28326.4938a8",
+        "name": "",
+        "property": "payload.siteId",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "default",
+                "vt": "str"
+            },
+            {
+                "t": "neq",
+                "v": "default",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 625,
+        "y": 400,
+        "wires": [
+            [
+                "54b59b2f.4d399c"
+            ],
+            [
+                "c1ba2e51.5cd308"
+            ]
+        ],
         "l": false
     },
     {
-        "id": "e7734acd.842b48",
-        "type": "comment",
-        "z": "244bcf43.3f86b8",
-        "name": "Install:",
-        "info": "",
-        "x": 120,
-        "y": 40,
+        "id": "6c0bcbfd.f3ba64",
+        "type": "link out",
+        "z": "f5a28326.4938a8",
+        "name": "",
+        "links": [
+            "c962427a.72a998"
+        ],
+        "x": 985,
+        "y": 440,
         "wires": []
     },
     {
-        "id": "a06751fb.602ad",
-        "type": "comment",
-        "z": "244bcf43.3f86b8",
-        "name": "Edit the MQTT Nodes to use your MQTT Broker",
-        "info": "",
-        "x": 360,
-        "y": 80,
-        "wires": []
+        "id": "c962427a.72a998",
+        "type": "link in",
+        "z": "f5a28326.4938a8",
+        "name": "",
+        "links": [
+            "6c0bcbfd.f3ba64"
+        ],
+        "x": 125,
+        "y": 380,
+        "wires": [
+            [
+                "69c0468a.a8b28"
+            ]
+        ]
     },
     {
-        "id": "128f963a.e97cc2",
-        "type": "comment",
-        "z": "244bcf43.3f86b8",
-        "name": "Edit the Call-Service Nodes to use your Home Assistant",
-        "info": "",
-        "x": 380,
-        "y": 120,
-        "wires": []
-    },
-    {
-        "id": "286570f9.1ace38",
-        "type": "mqtt out",
-        "z": "244bcf43.3f86b8",
-        "name": "hermes/dialogueManager/continueSession",
-        "topic": "hermes/dialogueManager/continueSession",
-        "qos": "2",
-        "retain": "",
-        "broker": "b81ccd5b.97c33",
-        "x": 655,
-        "y": 480,
-        "wires": [],
-        "l": false
-    },
-    {
-        "id": "70afa362.91d3ec",
-        "type": "comment",
-        "z": "244bcf43.3f86b8",
-        "name": "Continue to as where?",
-        "info": "",
-        "x": 790,
-        "y": 480,
-        "wires": []
-    },
-    {
-        "id": "18b877af.344b38",
+        "id": "50f3d715.0b2c68",
         "type": "server",
         "z": "",
-        "name": "<Insert your Server here>",
+        "name": "Home Assistant_columbus",
         "legacy": false,
         "hassio": false,
         "rejectUnauthorizedCerts": true,
-        "ha_boolean": "y|yes|true|on|home|open"
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true
     },
     {
-        "id": "b81ccd5b.97c33",
+        "id": "c7598dc2.56c888",
         "type": "mqtt-broker",
         "z": "",
-        "name": "< insert your mqtt server here>",
-        "broker": "",
+        "name": "",
+        "broker": "192.168.178.3",
         "port": "1883",
         "clientid": "",
         "usetls": false,
-        "compatmode": true,
+        "compatmode": false,
         "keepalive": "60",
         "cleansession": true,
         "birthTopic": "",

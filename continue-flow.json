@@ -1,15 +1,39 @@
 [
     {
-        "id": "ef9cb855.e2d588",
-        "type": "tab",
-        "label": "Flow 2",
-        "disabled": false,
-        "info": ""
+        "id": "f45932af.32e958",
+        "type": "subflow",
+        "name": "Continue",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 110,
+                "y": 210,
+                "wires": [
+                    {
+                        "id": "95e9f3f6.35deb"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 490,
+                "y": 170,
+                "wires": [
+                    {
+                        "id": "c65232d9.91fae",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": []
     },
     {
-        "id": "9ffe5bd0.816e7",
+        "id": "6f62436.100c13c",
         "type": "switch",
-        "z": "ef9cb855.e2d588",
+        "z": "f45932af.32e958",
         "name": "",
         "property": "payload.intent.slots_by_name.Antwort[0].rawValue",
         "propertyType": "msg",
@@ -23,169 +47,123 @@
                 "t": "eq",
                 "v": "nein",
                 "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "mein",
+                "vt": "str"
             }
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 2,
-        "x": 260,
-        "y": 240,
+        "outputs": 3,
+        "x": 290,
+        "y": 210,
         "wires": [
             [
-                "49954486.9d3efc"
+                "c65232d9.91fae"
             ],
             [
-                "d104a3f1.0e6e28"
+                "60b5fdda.646df4"
+            ],
+            [
+                "60b5fdda.646df4"
             ]
         ]
     },
     {
-        "id": "49954486.9d3efc",
+        "id": "c65232d9.91fae",
         "type": "function",
-        "z": "ef9cb855.e2d588",
+        "z": "f45932af.32e958",
         "name": "erstelle_say_json",
         "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"siteId\"] = \"default\";\nnew_msg.payload[\"text\"] = \"OK, was willst du ändern?\";\nnew_msg.payload[\"lang\"] = \"de\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:ModifyObject\"];\nnew_msg.payload[\"customData\"] = custom_data;\nmsg = new_msg;\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
-        "x": 395,
-        "y": 200,
+        "x": 425,
+        "y": 170,
         "wires": [
-            [
-                "66ddcc44.d8ce94"
-            ]
+            []
         ],
         "l": false
     },
     {
-        "id": "d104a3f1.0e6e28",
+        "id": "60b5fdda.646df4",
         "type": "function",
-        "z": "ef9cb855.e2d588",
+        "z": "f45932af.32e958",
         "name": "erstelle_say_json",
         "func": "var text = msg.payload; \nvar entity= msg.payload.slots[0].rawValue\nvar id= msg.payload.sessionId\nvar new_msg = {};\nnew_msg.payload = {};\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"entity\"] = entity;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"siteId\"] = \"default\";\nnew_msg.payload[\"text\"] = \"Sehr wohl, meister\";\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
-        "x": 395,
-        "y": 260,
+        "x": 425,
+        "y": 230,
         "wires": [
             [
-                "e2487d2b.ab04f8"
+                "821cf240.344f48"
             ]
         ],
         "l": false
     },
     {
-        "id": "c34d48d2.213418",
+        "id": "a5c8fa30.e07698",
         "type": "comment",
-        "z": "ef9cb855.e2d588",
+        "z": "f45932af.32e958",
         "name": "End",
         "info": "",
-        "x": 550,
-        "y": 260,
+        "x": 580,
+        "y": 230,
         "wires": []
     },
     {
-        "id": "fb52bd67.23c228",
+        "id": "df817905.54e0e8",
         "type": "comment",
-        "z": "ef9cb855.e2d588",
+        "z": "f45932af.32e958",
         "name": "Continue",
         "info": "",
-        "x": 560,
-        "y": 200,
+        "x": 590,
+        "y": 170,
         "wires": []
     },
     {
-        "id": "e2487d2b.ab04f8",
+        "id": "821cf240.344f48",
         "type": "mqtt out",
-        "z": "ef9cb855.e2d588",
+        "z": "f45932af.32e958",
         "name": "hermes/dialogueManager/endSession",
         "topic": "hermes/dialogueManager/endSession",
         "qos": "2",
         "retain": "",
-        "broker": "b81ccd5b.97c33",
-        "x": 455,
-        "y": 260,
+        "broker": "c7598dc2.56c888",
+        "x": 485,
+        "y": 230,
         "wires": [],
         "l": false
     },
     {
-        "id": "710fb77f.cf917",
+        "id": "95e9f3f6.35deb",
         "type": "function",
-        "z": "ef9cb855.e2d588",
+        "z": "f45932af.32e958",
         "name": "slots",
         "func": "// Create a map of intent slots grouped by slotName.\n// Only include those we are at least 40% confident.\n// Elements are arrays of slots to deal with mulltiples.\n// e.g. {\"switchLocation\": [{\"rawValue\": \"bedroom\"}, \"rawValue\": \"office\"}]\n// It is up to downstream to decide if it can deal with any multiples or\n// insuficient slots.\n//\n// Check customData to see if this is a continued turn i.e. we got some slots\n// before and we are filling in.\nconst slots = msg.payload[\"slots\"];\nconst customData = msg.payload[\"customData\"]\nconst continuedIntent = customData !== null;\n// TODO: This will merge slots if intent is changed during a contintueSession\nnode.status({fill:\"grey\", shape:\"dot\", text: \"continued? \" + continuedIntent});\nvar by_name = {};\nif (continuedIntent === true) {\n    by_name = JSON.parse(customData);\n}\nfor (var i in slots) {\n    slot = slots[i];\n    if (slot.confidenceScore >= 0.40) {\n        list = by_name[slot.slotName] || [];\n        list.push(slot);\n        by_name[slot.slotName] = list;\n    }\n}\n    \nmsg.intent.slots_by_name = by_name;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 155,
-        "y": 240,
+        "x": 185,
+        "y": 210,
         "wires": [
             [
-                "9ffe5bd0.816e7"
+                "6f62436.100c13c"
             ]
         ],
         "l": false
     },
     {
-        "id": "16b2fd56.1acda3",
-        "type": "mqtt-json",
-        "z": "ef9cb855.e2d588",
-        "name": "Voice (/intent/aluavin:Continue)",
-        "topic": "hermes/intent/aluavin:Continue",
-        "property": "",
-        "qos": "0",
-        "broker": "b81ccd5b.97c33",
-        "x": 85,
-        "y": 240,
-        "wires": [
-            [
-                "710fb77f.cf917"
-            ]
-        ],
-        "l": false
-    },
-    {
-        "id": "66ddcc44.d8ce94",
-        "type": "mqtt out",
-        "z": "ef9cb855.e2d588",
-        "name": "hermes/dialogueManager/continueSession",
-        "topic": "hermes/dialogueManager/continueSession",
-        "qos": "2",
-        "retain": "",
-        "broker": "b81ccd5b.97c33",
-        "x": 455,
-        "y": 200,
-        "wires": [],
-        "l": false
-    },
-    {
-        "id": "e6019f5.8be1ce",
-        "type": "comment",
-        "z": "ef9cb855.e2d588",
-        "name": "Install:",
-        "info": "",
-        "x": 120,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "2dfe37ff.b0b1b",
-        "type": "comment",
-        "z": "ef9cb855.e2d588",
-        "name": "Edit the MQTT Nodes to use your MQTT Broker",
-        "info": "",
-        "x": 360,
-        "y": 140,
-        "wires": []
-    },
-    {
-        "id": "b81ccd5b.97c33",
+        "id": "c7598dc2.56c888",
         "type": "mqtt-broker",
         "z": "",
-        "name": "< insert your mqtt server here>",
-        "broker": "",
+        "name": "",
+        "broker": "192.168.178.3",
         "port": "1883",
         "clientid": "",
         "usetls": false,
-        "compatmode": true,
+        "compatmode": false,
         "keepalive": "60",
         "cleansession": true,
         "birthTopic": "",
