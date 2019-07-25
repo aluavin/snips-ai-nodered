@@ -1,0 +1,1745 @@
+[
+    {
+        "id": "f45932af.32e958",
+        "type": "subflow",
+        "name": "Continue",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 110,
+                "y": 210,
+                "wires": [
+                    {
+                        "id": "95e9f3f6.35deb"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 490,
+                "y": 170,
+                "wires": [
+                    {
+                        "id": "c65232d9.91fae",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": []
+    },
+    {
+        "id": "6f62436.100c13c",
+        "type": "switch",
+        "z": "f45932af.32e958",
+        "name": "",
+        "property": "payload.intent.slots_by_name.Antwort[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ja",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "nein",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "mein",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 290,
+        "y": 210,
+        "wires": [
+            [
+                "c65232d9.91fae"
+            ],
+            [
+                "60b5fdda.646df4"
+            ],
+            [
+                "60b5fdda.646df4"
+            ]
+        ]
+    },
+    {
+        "id": "c65232d9.91fae",
+        "type": "function",
+        "z": "f45932af.32e958",
+        "name": "erstelle_say_json",
+        "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"siteId\"] = \"default\";\nnew_msg.payload[\"text\"] = \"OK, was willst du ändern?\";\nnew_msg.payload[\"lang\"] = \"de\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:ModifyObject\"];\nnew_msg.payload[\"customData\"] = custom_data;\nmsg = new_msg;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 425,
+        "y": 170,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "60b5fdda.646df4",
+        "type": "function",
+        "z": "f45932af.32e958",
+        "name": "erstelle_say_json",
+        "func": "var text = msg.payload; \nvar entity= msg.payload.slots[0].rawValue\nvar id= msg.payload.sessionId\nvar new_msg = {};\nnew_msg.payload = {};\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"entity\"] = entity;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"siteId\"] = \"default\";\nnew_msg.payload[\"text\"] = \"Sehr wohl, meister\";\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 425,
+        "y": 230,
+        "wires": [
+            [
+                "821cf240.344f48"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "a5c8fa30.e07698",
+        "type": "comment",
+        "z": "f45932af.32e958",
+        "name": "End",
+        "info": "",
+        "x": 580,
+        "y": 230,
+        "wires": []
+    },
+    {
+        "id": "df817905.54e0e8",
+        "type": "comment",
+        "z": "f45932af.32e958",
+        "name": "Continue",
+        "info": "",
+        "x": 590,
+        "y": 170,
+        "wires": []
+    },
+    {
+        "id": "821cf240.344f48",
+        "type": "mqtt out",
+        "z": "f45932af.32e958",
+        "name": "hermes/dialogueManager/endSession",
+        "topic": "hermes/dialogueManager/endSession",
+        "qos": "2",
+        "retain": "",
+        "broker": "c7598dc2.56c888",
+        "x": 485,
+        "y": 230,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "95e9f3f6.35deb",
+        "type": "function",
+        "z": "f45932af.32e958",
+        "name": "slots",
+        "func": "// Create a map of intent slots grouped by slotName.\n// Only include those we are at least 40% confident.\n// Elements are arrays of slots to deal with mulltiples.\n// e.g. {\"switchLocation\": [{\"rawValue\": \"bedroom\"}, \"rawValue\": \"office\"}]\n// It is up to downstream to decide if it can deal with any multiples or\n// insuficient slots.\n//\n// Check customData to see if this is a continued turn i.e. we got some slots\n// before and we are filling in.\nconst slots = msg.payload[\"slots\"];\nconst customData = msg.payload[\"customData\"]\nconst continuedIntent = customData !== null;\n// TODO: This will merge slots if intent is changed during a contintueSession\nnode.status({fill:\"grey\", shape:\"dot\", text: \"continued? \" + continuedIntent});\nvar by_name = {};\nif (continuedIntent === true) {\n    by_name = JSON.parse(customData);\n}\nfor (var i in slots) {\n    slot = slots[i];\n    if (slot.confidenceScore >= 0.40) {\n        list = by_name[slot.slotName] || [];\n        list.push(slot);\n        by_name[slot.slotName] = list;\n    }\n}\n    \nmsg.intent.slots_by_name = by_name;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 185,
+        "y": 210,
+        "wires": [
+            [
+                "6f62436.100c13c"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "476c1ed6.6facb8",
+        "type": "subflow",
+        "name": "ModifyObject",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 130,
+                "y": 230,
+                "wires": [
+                    {
+                        "id": "c092e87.ad1bb18"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 880,
+                "y": 230,
+                "wires": [
+                    {
+                        "id": "285f3c62.bda5ec",
+                        "port": 0
+                    },
+                    {
+                        "id": "c04c13d0.1879f",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": []
+    },
+    {
+        "id": "cf2726e3.6465b8",
+        "type": "switch",
+        "z": "476c1ed6.6facb8",
+        "name": "device",
+        "property": "payload.intent.slots_by_name.device[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "licht",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "nichts",
+                "vt": "str"
+            },
+            {
+                "t": "null"
+            },
+            {
+                "t": "eq",
+                "v": "lautstärke",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "heizung",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 5,
+        "x": 300,
+        "y": 230,
+        "wires": [
+            [
+                "ded1b1c4.c1761"
+            ],
+            [],
+            [
+                "c04c13d0.1879f"
+            ],
+            [],
+            [
+                "3baf8795.d69cc8"
+            ]
+        ]
+    },
+    {
+        "id": "ded1b1c4.c1761",
+        "type": "switch",
+        "z": "476c1ed6.6facb8",
+        "name": "deviceLocation",
+        "property": "payload.intent.slots_by_name.deviceLocation[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "büro",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "buero",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "flur",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "küche",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "schlafzimmer",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnung",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnzimmer",
+                "vt": "str"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 8,
+        "x": 490,
+        "y": 140,
+        "wires": [
+            [
+                "d9cf2ac5.954b98",
+                "b21a7438.f811a"
+            ],
+            [
+                "d9cf2ac5.954b98",
+                "b21a7438.f811a"
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [
+                "285f3c62.bda5ec"
+            ]
+        ]
+    },
+    {
+        "id": "3baf8795.d69cc8",
+        "type": "switch",
+        "z": "476c1ed6.6facb8",
+        "name": "deviceLocation",
+        "property": "payload.intent.slots_by_name.deviceLocation[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "eq",
+                "v": "büro",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "flur",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "küche",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "schlafzimmer",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnung",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnzimmer",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 7,
+        "x": 490,
+        "y": 310,
+        "wires": [
+            [
+                "285f3c62.bda5ec"
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "285f3c62.bda5ec",
+        "type": "function",
+        "z": "476c1ed6.6facb8",
+        "name": "Ask for Room",
+        "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"customData\"] = custom_data;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"text\"] = \"Wo?\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:ModifyObject\"];\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 595,
+        "y": 230,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "c04c13d0.1879f",
+        "type": "function",
+        "z": "476c1ed6.6facb8",
+        "name": "Ask for Room",
+        "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"customData\"] = custom_data;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"text\"] = \"Was möchtest du wie ändern?\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:ModifyObject\"];\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 455,
+        "y": 230,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "d9cf2ac5.954b98",
+        "type": "debug",
+        "z": "476c1ed6.6facb8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 750,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "c092e87.ad1bb18",
+        "type": "function",
+        "z": "476c1ed6.6facb8",
+        "name": "slots",
+        "func": "// Create a map of intent slots grouped by slotName.\n// Only include those we are at least 40% confident.\n// Elements are arrays of slots to deal with mulltiples.\n// e.g. {\"switchLocation\": [{\"rawValue\": \"bedroom\"}, \"rawValue\": \"office\"}]\n// It is up to downstream to decide if it can deal with any multiples or\n// insuficient slots.\n//\n// Check customData to see if this is a continued turn i.e. we got some slots\n// before and we are filling in.\nconst slots = msg.payload[\"slots\"];\nconst customData = msg.payload[\"customData\"]\nconst continuedIntent = customData !== null;\n// TODO: This will merge slots if intent is changed during a contintueSession\nnode.status({fill:\"grey\", shape:\"dot\", text: \"continued? \" + continuedIntent});\nvar by_name = {};\nif (continuedIntent === true) {\n    by_name = JSON.parse(customData);\n}\nfor (var i in slots) {\n    slot = slots[i];\n    if (slot.confidenceScore >= 0.40) {\n        list = by_name[slot.slotName] || [];\n        list.push(slot);\n        by_name[slot.slotName] = list;\n    }\n}\n    \nmsg.intent.slots_by_name = by_name;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 195,
+        "y": 230,
+        "wires": [
+            [
+                "cf2726e3.6465b8"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "b21a7438.f811a",
+        "type": "switch",
+        "z": "476c1ed6.6facb8",
+        "name": "",
+        "property": "payload.intent.slots_by_name.deviceModification[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "heller",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "dunkler",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "kälter",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wärmer",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 710,
+        "y": 100,
+        "wires": [
+            [],
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "f5a28326.4938a8",
+        "type": "subflow",
+        "name": "DeactivateObject",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 30,
+                "y": 320,
+                "wires": [
+                    {
+                        "id": "16cc46ef.8e9901"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 780,
+                "y": 400,
+                "wires": [
+                    {
+                        "id": "54b59b2f.4d399c",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": []
+    },
+    {
+        "id": "a133373d.db9ba8",
+        "type": "switch",
+        "z": "f5a28326.4938a8",
+        "name": "Where?",
+        "property": "payload.intent.slots_by_name.deviceLocation[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "büro",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "buero",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "flur",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "küche",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "kueche",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "schlafzimmer",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnung",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnzimmer",
+                "vt": "str"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 9,
+        "x": 460,
+        "y": 260,
+        "wires": [
+            [
+                "67a14968.eeb58"
+            ],
+            [
+                "67a14968.eeb58"
+            ],
+            [
+                "39a0b059.f2793"
+            ],
+            [
+                "a6c127ee.531c2"
+            ],
+            [
+                "a6c127ee.531c2"
+            ],
+            [
+                "8fc6e69b.aa9f5"
+            ],
+            [
+                "12d06414.2bdbec"
+            ],
+            [
+                "4f5315fe.f65c74"
+            ],
+            [
+                "269b28dd.03d208"
+            ]
+        ]
+    },
+    {
+        "id": "69c0468a.a8b28",
+        "type": "switch",
+        "z": "f5a28326.4938a8",
+        "name": "What?",
+        "property": "payload.intent.slots_by_name.device[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "licht",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Heizung",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 220,
+        "y": 320,
+        "wires": [
+            [
+                "a133373d.db9ba8"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "67a14968.eeb58",
+        "type": "api-call-service",
+        "z": "f5a28326.4938a8",
+        "name": "Büro",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_off",
+        "data": "{\"entity_id\":\"light.gruppebuero\"}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 625,
+        "y": 170,
+        "wires": [
+            [
+                "39dd60d.92e7ea"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "39a0b059.f2793",
+        "type": "api-call-service",
+        "z": "f5a28326.4938a8",
+        "name": "Flur",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_off",
+        "data": "{\"entity_id\":\"light.gruppeflur\"}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 625,
+        "y": 200,
+        "wires": [
+            [
+                "39dd60d.92e7ea"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "a6c127ee.531c2",
+        "type": "api-call-service",
+        "z": "f5a28326.4938a8",
+        "name": "Küche",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_off",
+        "data": "{\"entity_id\":\"light.gruppekueche\"}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 625,
+        "y": 230,
+        "wires": [
+            [
+                "39dd60d.92e7ea"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "8fc6e69b.aa9f5",
+        "type": "api-call-service",
+        "z": "f5a28326.4938a8",
+        "name": "Schlafzimmer",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_off",
+        "data": "{\"entity_id\":\"light.gruppeschlafzimmer\"}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 625,
+        "y": 290,
+        "wires": [
+            [
+                "39dd60d.92e7ea"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "12d06414.2bdbec",
+        "type": "api-call-service",
+        "z": "f5a28326.4938a8",
+        "name": "Wohnung",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_off",
+        "data": "{\"entity_id\":\"light.gruppebuero, light.gruppeflur, light.gruppekueche, light.gruppeschlafzimmer, light.gruppewohnzimmer\"}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 625,
+        "y": 320,
+        "wires": [
+            [
+                "39dd60d.92e7ea"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "4f5315fe.f65c74",
+        "type": "api-call-service",
+        "z": "f5a28326.4938a8",
+        "name": "Wohnzimmer",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_off",
+        "data": "{\"entity_id\":\"light.gruppewohnzimmer\"}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 625,
+        "y": 350,
+        "wires": [
+            [
+                "39dd60d.92e7ea"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "54b59b2f.4d399c",
+        "type": "function",
+        "z": "f5a28326.4938a8",
+        "name": "Ask for Room",
+        "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"customData\"] = custom_data;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"text\"] = \"Wo?\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:DeactivateObject\"];\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 715,
+        "y": 400,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "39dd60d.92e7ea",
+        "type": "function",
+        "z": "f5a28326.4938a8",
+        "name": "erstelle_say",
+        "func": "var payload = msg.payload; \nvar entity= payload.intent.slots_by_name.device[0].rawValue;\nvar ort= payload.intent.slots_by_name.deviceLocation[0].rawValue;\nvar id= msg.payload.sessionId;\nvar intend = msg.payload.intend\nvar new_msg = {};\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"siteId\"] = ort;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:Continue\"];\nnew_msg.payload[\"text\"] = \"Licht aus im \" + ort;\nnew_msg.payload[\"customData\"] = custom_data;\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 715,
+        "y": 260,
+        "wires": [
+            [
+                "c5b5a3a2.40fb6"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "16cc46ef.8e9901",
+        "type": "function",
+        "z": "f5a28326.4938a8",
+        "name": "slots",
+        "func": "// Create a map of intent slots grouped by slotName.\n// Only include those we are at least 40% confident.\n// Elements are arrays of slots to deal with mulltiples.\n// e.g. {\"switchLocation\": [{\"rawValue\": \"bedroom\"}, \"rawValue\": \"office\"}]\n// It is up to downstream to decide if it can deal with any multiples or\n// insuficient slots.\n//\n// Check customData to see if this is a continued turn i.e. we got some slots\n// before and we are filling in.\nconst slots = msg.payload[\"slots\"];\nconst customData = msg.payload[\"customData\"]\nconst continuedIntent = customData !== null;\n// TODO: This will merge slots if intent is changed during a contintueSession\nnode.status({fill:\"grey\", shape:\"dot\", text: \"continued? \" + continuedIntent});\nvar by_name = {};\nif (continuedIntent === true) {\n    by_name = JSON.parse(customData);\n}\nfor (var i in slots) {\n    slot = slots[i];\n    if (slot.confidenceScore >= 0.40) {\n        list = by_name[slot.slotName] || [];\n        list.push(slot);\n        by_name[slot.slotName] = list;\n    }\n}\n    \nmsg.intent.slots_by_name = by_name;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 105,
+        "y": 320,
+        "wires": [
+            [
+                "69c0468a.a8b28"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "2174fb72.760d2c",
+        "type": "comment",
+        "z": "f5a28326.4938a8",
+        "name": "Restructure the Message",
+        "info": "",
+        "x": 210,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "c5b5a3a2.40fb6",
+        "type": "mqtt out",
+        "z": "f5a28326.4938a8",
+        "name": "hermes/dialogueManager/endSession",
+        "topic": "hermes/dialogueManager/endSession",
+        "qos": "2",
+        "retain": "",
+        "broker": "c7598dc2.56c888",
+        "x": 910,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "c1ba2e51.5cd308",
+        "type": "change",
+        "z": "f5a28326.4938a8",
+        "name": "siteID => device_location",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.intent.slots_by_name.deviceLocation[0].rawValue",
+                "pt": "msg",
+                "to": "payload.siteId",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 810,
+        "y": 440,
+        "wires": [
+            [
+                "6c0bcbfd.f3ba64"
+            ]
+        ]
+    },
+    {
+        "id": "269b28dd.03d208",
+        "type": "switch",
+        "z": "f5a28326.4938a8",
+        "name": "",
+        "property": "payload.siteId",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "default",
+                "vt": "str"
+            },
+            {
+                "t": "neq",
+                "v": "default",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 625,
+        "y": 400,
+        "wires": [
+            [
+                "54b59b2f.4d399c"
+            ],
+            [
+                "c1ba2e51.5cd308"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "6c0bcbfd.f3ba64",
+        "type": "link out",
+        "z": "f5a28326.4938a8",
+        "name": "",
+        "links": [
+            "c962427a.72a998"
+        ],
+        "x": 985,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "c962427a.72a998",
+        "type": "link in",
+        "z": "f5a28326.4938a8",
+        "name": "",
+        "links": [
+            "6c0bcbfd.f3ba64"
+        ],
+        "x": 125,
+        "y": 380,
+        "wires": [
+            [
+                "69c0468a.a8b28"
+            ]
+        ]
+    },
+    {
+        "id": "47a2d15e.73b988",
+        "type": "subflow",
+        "name": "ActivateObject",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 80,
+                "y": 280,
+                "wires": [
+                    {
+                        "id": "def08d54.9ce498"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 910,
+                "y": 370,
+                "wires": [
+                    {
+                        "id": "d1b905d0.fd9198",
+                        "port": 0
+                    },
+                    {
+                        "id": "4359ad5a.212b94",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": []
+    },
+    {
+        "id": "5bc53f4a.98dc6",
+        "type": "switch",
+        "z": "47a2d15e.73b988",
+        "name": "Where?",
+        "property": "payload.intent.slots_by_name.deviceLocation[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "büro",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "buero",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "flur",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "küche",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "kueche",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "schlafzimmer",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnung",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "wohnzimmer",
+                "vt": "str"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 9,
+        "x": 650,
+        "y": 260,
+        "wires": [
+            [
+                "16d15626.b67752"
+            ],
+            [
+                "16d15626.b67752"
+            ],
+            [
+                "17235a59.e8e97e"
+            ],
+            [
+                "22e676a3.e22d42"
+            ],
+            [
+                "22e676a3.e22d42"
+            ],
+            [
+                "3696e599.25c972"
+            ],
+            [
+                "e44b39d2.c3b92"
+            ],
+            [
+                "c0dc9410.a3319"
+            ],
+            [
+                "6253fd2.856df84"
+            ]
+        ]
+    },
+    {
+        "id": "8bf9ffca.4209b8",
+        "type": "switch",
+        "z": "47a2d15e.73b988",
+        "name": "What?",
+        "property": "payload.intent.slots_by_name.device[0].rawValue",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "licht",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "heizung",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "spotify",
+                "vt": "str"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 330,
+        "y": 280,
+        "wires": [
+            [
+                "5bc53f4a.98dc6"
+            ],
+            [
+                "5bc53f4a.98dc6"
+            ],
+            [
+                "5bc53f4a.98dc6"
+            ],
+            [
+                "d1b905d0.fd9198"
+            ]
+        ]
+    },
+    {
+        "id": "16d15626.b67752",
+        "type": "api-call-service",
+        "z": "47a2d15e.73b988",
+        "name": "Büro",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppebuero\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 815,
+        "y": 130,
+        "wires": [
+            [
+                "fc86732c.d0ec5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "17235a59.e8e97e",
+        "type": "api-call-service",
+        "z": "47a2d15e.73b988",
+        "name": "Flur",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppeflur\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 815,
+        "y": 160,
+        "wires": [
+            [
+                "fc86732c.d0ec5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "22e676a3.e22d42",
+        "type": "api-call-service",
+        "z": "47a2d15e.73b988",
+        "name": "Küche",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppekueche\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "x": 815,
+        "y": 190,
+        "wires": [
+            [
+                "fc86732c.d0ec5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "3696e599.25c972",
+        "type": "api-call-service",
+        "z": "47a2d15e.73b988",
+        "name": "Schlafzimmer",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppeschlafzimmer\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "x": 815,
+        "y": 240,
+        "wires": [
+            [
+                "fc86732c.d0ec5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e44b39d2.c3b92",
+        "type": "api-call-service",
+        "z": "47a2d15e.73b988",
+        "name": "Wohnung",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppebuero, light.gruppeflur, light.gruppekueche, light.gruppeschlafzimmer, light.gruppewohnzimmer\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "x": 815,
+        "y": 270,
+        "wires": [
+            [
+                "fc86732c.d0ec5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "c0dc9410.a3319",
+        "type": "api-call-service",
+        "z": "47a2d15e.73b988",
+        "name": "Wohnzimmer",
+        "server": "50f3d715.0b2c68",
+        "service_domain": "light",
+        "service": "turn_on",
+        "data": "{\"entity_id\":\"light.gruppewohnzimmer\",\"transition\":2}",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "x": 815,
+        "y": 300,
+        "wires": [
+            [
+                "fc86732c.d0ec5"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "4359ad5a.212b94",
+        "type": "function",
+        "z": "47a2d15e.73b988",
+        "name": "Ask for Room  & Format MQTT for retain Slots",
+        "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"customData\"] = custom_data;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"text\"] = \"Wo?\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:ActivateObject\"];\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 815,
+        "y": 390,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "fc86732c.d0ec5",
+        "type": "function",
+        "z": "47a2d15e.73b988",
+        "name": "erstelle_say",
+        "func": "var payload = msg.payload; \nvar entity= payload.intent.slots_by_name.device[0].rawValue;\nvar ort= payload.intent.slots_by_name.deviceLocation[0].rawValue;\nvar id= msg.payload.sessionId;\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"siteId\"] = ort;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:Continue\"];\nnew_msg.payload[\"text\"] = \"Es werde Licht im \" + ort;\nnew_msg.payload[\"customData\"] = custom_data;\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 895,
+        "y": 200,
+        "wires": [
+            [
+                "9da53843.ed0c4"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "def08d54.9ce498",
+        "type": "function",
+        "z": "47a2d15e.73b988",
+        "name": "slots",
+        "func": "// Create a map of intent slots grouped by slotName.\n// Only include those we are at least 40% confident.\n// Elements are arrays of slots to deal with mulltiples.\n// e.g. {\"switchLocation\": [{\"rawValue\": \"bedroom\"}, \"rawValue\": \"office\"}]\n// It is up to downstream to decide if it can deal with any multiples or\n// insuficient slots.\n//\n// Check customData to see if this is a continued turn i.e. we got some slots\n// before and we are filling in.\nconst slots = msg.payload[\"slots\"];\nconst customData = msg.payload[\"customData\"]\nconst continuedIntent = customData !== null;\n// TODO: This will merge slots if intent is changed during a contintueSession\nnode.status({fill:\"grey\", shape:\"dot\", text: \"continued? \" + continuedIntent});\nvar by_name = {};\nif (continuedIntent === true) {\n    by_name = JSON.parse(customData);\n}\nfor (var i in slots) {\n    slot = slots[i];\n    if (slot.confidenceScore >= 0.40) {\n        list = by_name[slot.slotName] || [];\n        list.push(slot);\n        by_name[slot.slotName] = list;\n    }\n}\n    \nmsg.intent.slots_by_name = by_name;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 165,
+        "y": 280,
+        "wires": [
+            [
+                "8bf9ffca.4209b8",
+                "3ec8116b.20e076"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "351677f1.cef1a",
+        "type": "comment",
+        "z": "47a2d15e.73b988",
+        "name": "Restructure MQTT Content",
+        "info": "",
+        "x": 210,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "88c0b9c7.c5f78",
+        "type": "comment",
+        "z": "47a2d15e.73b988",
+        "name": "Ask for Room  & Format MQTT for retain Slots",
+        "info": "",
+        "x": 760,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "4cc6513b.c52968",
+        "type": "comment",
+        "z": "47a2d15e.73b988",
+        "name": "TTS & Continue? & Format MQTT for retain Slots",
+        "info": "",
+        "x": 1040,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "d1b905d0.fd9198",
+        "type": "function",
+        "z": "47a2d15e.73b988",
+        "name": "Ask for Room  & Format MQTT for retain Slots",
+        "func": "var text = msg.payload; \nvar id= msg.payload.sessionId\nvar new_msg = {};\nvar intend = msg.payload.intent.slots_by_name\nvar custom_data = JSON.stringify(intend);\nnew_msg.payload = {};\nnew_msg.payload[\"customData\"] = custom_data;\nnew_msg.payload[\"sessionId\"] = id;\nnew_msg.payload[\"init\"] = \"action\";\nnew_msg.payload[\"text\"] = \"Was soll ich wo anschalten?\";\nnew_msg.payload[\"intentFilter\"] = [\"aluavin:ActivateObject\"];\nnew_msg.payload[\"lang\"] = \"de\";\nmsg = new_msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 815,
+        "y": 350,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "6253fd2.856df84",
+        "type": "switch",
+        "z": "47a2d15e.73b988",
+        "name": "",
+        "property": "payload.siteId",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "default",
+                "vt": "str"
+            },
+            {
+                "t": "neq",
+                "v": "default",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 415,
+        "y": 400,
+        "wires": [
+            [
+                "4359ad5a.212b94"
+            ],
+            [
+                "e0163f1e.e4981"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e0163f1e.e4981",
+        "type": "change",
+        "z": "47a2d15e.73b988",
+        "name": "siteID => device_location",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.intent.slots_by_name.deviceLocation[0].rawValue",
+                "pt": "msg",
+                "to": "payload.siteId",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 590,
+        "y": 430,
+        "wires": [
+            [
+                "bf16ffed.e72618"
+            ]
+        ]
+    },
+    {
+        "id": "be546656.49f188",
+        "type": "link in",
+        "z": "47a2d15e.73b988",
+        "name": "",
+        "links": [
+            "bf16ffed.e72618"
+        ],
+        "x": 165,
+        "y": 320,
+        "wires": [
+            [
+                "8bf9ffca.4209b8"
+            ]
+        ]
+    },
+    {
+        "id": "bf16ffed.e72618",
+        "type": "link out",
+        "z": "47a2d15e.73b988",
+        "name": "",
+        "links": [
+            "be546656.49f188"
+        ],
+        "x": 815,
+        "y": 430,
+        "wires": []
+    },
+    {
+        "id": "3ec8116b.20e076",
+        "type": "debug",
+        "z": "47a2d15e.73b988",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 280,
+        "y": 410,
+        "wires": []
+    },
+    {
+        "id": "9da53843.ed0c4",
+        "type": "mqtt out",
+        "z": "47a2d15e.73b988",
+        "name": "",
+        "topic": "hermes/dialogueManager/endSession",
+        "qos": "",
+        "retain": "",
+        "broker": "c7598dc2.56c888",
+        "x": 1090,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "50f3d715.0b2c68",
+        "type": "server",
+        "z": "",
+        "name": "Home Assistant_columbus",
+        "legacy": false,
+        "hassio": false,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true
+    },
+    {
+        "id": "a3850dea.718e58",
+        "type": "tab",
+        "label": "Snips",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "6bef2c22.fc500c",
+        "type": "mqtt-json",
+        "z": "a3850dea.718e58",
+        "name": "DeactivateObject",
+        "topic": "hermes/intent/aluavin:DeactivateObject",
+        "property": "",
+        "qos": "0",
+        "broker": "c7598dc2.56c888",
+        "x": 220,
+        "y": 190,
+        "wires": [
+            [
+                "77471d6c.1ad3b4"
+            ]
+        ]
+    },
+    {
+        "id": "a260ef68.0d484",
+        "type": "mqtt-json",
+        "z": "a3850dea.718e58",
+        "name": "ModifyObject",
+        "topic": "hermes/intent/aluavin:ModifyObject",
+        "property": "",
+        "qos": "0",
+        "broker": "c7598dc2.56c888",
+        "x": 230,
+        "y": 340,
+        "wires": [
+            [
+                "1961b174.0b333f"
+            ]
+        ]
+    },
+    {
+        "id": "67341224.fa1184",
+        "type": "mqtt-json",
+        "z": "a3850dea.718e58",
+        "name": "Voice (/intent/aluavin:Continue)",
+        "topic": "hermes/intent/aluavin:Continue",
+        "property": "",
+        "qos": "0",
+        "broker": "c7598dc2.56c888",
+        "x": 170,
+        "y": 240,
+        "wires": [
+            [
+                "5dd061df.33b9e8"
+            ]
+        ]
+    },
+    {
+        "id": "8a27abfa.4c5618",
+        "type": "mqtt-json",
+        "z": "a3850dea.718e58",
+        "name": "hermes/intent/aluavin:ActivateObject",
+        "topic": "hermes/intent/aluavin:ActivateObject",
+        "property": "",
+        "qos": "0",
+        "broker": "c7598dc2.56c888",
+        "x": 160,
+        "y": 290,
+        "wires": [
+            [
+                "6cd2bf.ee90a54"
+            ]
+        ]
+    },
+    {
+        "id": "6cd2bf.ee90a54",
+        "type": "subflow:47a2d15e.73b988",
+        "z": "a3850dea.718e58",
+        "name": "",
+        "env": [],
+        "x": 440,
+        "y": 290,
+        "wires": [
+            [
+                "30541443.bcf164"
+            ]
+        ]
+    },
+    {
+        "id": "77471d6c.1ad3b4",
+        "type": "subflow:f5a28326.4938a8",
+        "z": "a3850dea.718e58",
+        "name": "",
+        "x": 430,
+        "y": 190,
+        "wires": [
+            [
+                "30541443.bcf164"
+            ]
+        ]
+    },
+    {
+        "id": "1961b174.0b333f",
+        "type": "subflow:476c1ed6.6facb8",
+        "z": "a3850dea.718e58",
+        "name": "",
+        "env": [],
+        "x": 450,
+        "y": 340,
+        "wires": [
+            [
+                "30541443.bcf164"
+            ]
+        ]
+    },
+    {
+        "id": "5dd061df.33b9e8",
+        "type": "subflow:f45932af.32e958",
+        "z": "a3850dea.718e58",
+        "name": "",
+        "env": [],
+        "x": 460,
+        "y": 240,
+        "wires": [
+            [
+                "30541443.bcf164"
+            ]
+        ],
+        "outputLabels": [
+            "Yes"
+        ]
+    },
+    {
+        "id": "7dbd94d2.d2997c",
+        "type": "comment",
+        "z": "a3850dea.718e58",
+        "name": "Snips Voice Assistant",
+        "info": "",
+        "x": 390,
+        "y": 90,
+        "wires": []
+    },
+    {
+        "id": "30541443.bcf164",
+        "type": "mqtt out",
+        "z": "a3850dea.718e58",
+        "name": "hermes/dialogueManager/continueSession",
+        "topic": "hermes/dialogueManager/continueSession",
+        "qos": "2",
+        "retain": "",
+        "broker": "c7598dc2.56c888",
+        "x": 770,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "26cee48b.7fcc84",
+        "type": "mqtt-json",
+        "z": "a3850dea.718e58",
+        "name": "",
+        "topic": "hermes/hotword/default/detected",
+        "property": "",
+        "qos": "0",
+        "broker": "c7598dc2.56c888",
+        "x": 300,
+        "y": 140,
+        "wires": [
+            [
+                "c2d9c01e.6b8cd"
+            ]
+        ]
+    },
+    {
+        "id": "c2d9c01e.6b8cd",
+        "type": "debug",
+        "z": "a3850dea.718e58",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 620,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "e1237126.ca57",
+        "type": "debug",
+        "z": "a3850dea.718e58",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 440,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "a407d383.2ab27",
+        "type": "function",
+        "z": "a3850dea.718e58",
+        "name": "debug",
+        "func": "return { \n    payload: global.get('homeassistant').homeAssistant_columbus\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 280,
+        "y": 640,
+        "wires": [
+            [
+                "e1237126.ca57"
+            ]
+        ]
+    },
+    {
+        "id": "57a4092a.6a4bb",
+        "type": "inject",
+        "z": "a3850dea.718e58",
+        "name": "Inject",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 120,
+        "y": 640,
+        "wires": [
+            [
+                "a407d383.2ab27"
+            ]
+        ]
+    },
+    {
+        "id": "f61b3c7c.55f8c8",
+        "type": "comment",
+        "z": "a3850dea.718e58",
+        "name": "get all data from HA",
+        "info": "",
+        "x": 260,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "a31ba0a2.d4fec",
+        "type": "mqtt-json",
+        "z": "a3850dea.718e58",
+        "name": "hermes/intent/#",
+        "topic": "hermes/intent/#",
+        "property": "",
+        "qos": "0",
+        "broker": "c7598dc2.56c888",
+        "x": 160,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ed7cf71c.0e328",
+        "type": "debug",
+        "z": "a3850dea.718e58",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 350,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "1e1a3773.3a1509",
+        "type": "comment",
+        "z": "a3850dea.718e58",
+        "name": "get all intend Data",
+        "info": "",
+        "x": 260,
+        "y": 490,
+        "wires": []
+    },
+    {
+        "id": "c7598dc2.56c888",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "192.168.178.3",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
